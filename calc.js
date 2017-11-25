@@ -19,9 +19,10 @@ Version: 0.0.1
 let number = '';
 let total = 0;
 let stageArr = [];
-let check = false;q
+let firstNum = true;
 let after = false;
 let eh = '';
+let equationSet = false;
 
 function stageNumber() {
 	stageArr.push(number);
@@ -29,7 +30,7 @@ function stageNumber() {
 
 	if ( stageArr.length > 1 ) {
 		stageArr.shift();
-		check = true;
+		firstNum = false;
 	}
 }
 
@@ -41,7 +42,7 @@ $('.numKey').click( function() {
 		number = '';
 		stageArr = [];	
 		total = 0;	
-		check = false;
+		firstNum = true;
 		after = false;
 		eh = '';
 	}
@@ -57,7 +58,7 @@ $('#clearButton').click( function() {
 	number = '';
 	stageArr = [];
 	total = 0;
-	check = false;
+	firstNum = true;
 	after = false;
 	$('#display').val('');
 });
@@ -70,6 +71,7 @@ $('#addButton').on('click', addition);
 function addition() {	
 	stageNumber();	
 	eh = '+';
+	equationSet = true;
 	total += Number(stageArr[0]);
 	$('#display').val(total);
 	after = false;
@@ -80,17 +82,23 @@ function addition() {
 *************************/
 $('#subtractButton').on('click', subtraction);
 
-function subtraction() {
-	stageNumber();
-	eh = '-';
-	if ( !check ) {
-		total = Number(stageArr[0]);
+function subtraction() {	
+	if ( !equationSet ) {
+		eh = '-';
+		equationSet = true; 
+		if ( firstNum ) {
+			total = Number(stageArr[0]);
+		}
+		else {
+			total -= Number(stageArr[0]);
+			$('#display').val(total);
+		}	
 	}
 	else {
-		total -= Number(stageArr[0]);
-		$('#display').val(total);
-	}	
-	after = false;
+		equation(eh);
+		eh = '-';
+	}
+	stageNumber();
 }
 
 
@@ -101,7 +109,7 @@ $('#multiplyButton').on('click', multiply);
 function multiply() {
 	stageNumber();	
 	eh = '*';
-	if ( !check ) {
+	if ( firstNum ) {
 		total = Number(stageArr[0]); 
 	}
 	else {
@@ -119,7 +127,7 @@ $('#divideButton').on('click', division);
 function division() {
 	stageNumber();
 	eh = '/';
-	if ( !check ) {
+	if ( firstNum ) {
 		total = Number(stageArr[0]);
 	}
 	else {
@@ -130,7 +138,7 @@ function division() {
 }
 
 
-/*7 Equation
+/* 7. Equation
 *************************/
 $('#equalsButton').on('click', equation);
 
