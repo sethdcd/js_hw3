@@ -19,7 +19,7 @@ Version: 0.0.1
 let number = '';
 let total = 0;
 let stageArr = [];
-let check = false;
+let check = false;q
 let after = false;
 let eh = '';
 
@@ -34,11 +34,17 @@ function stageNumber() {
 }
 
 
-
-
 /* 1. Select Number
 *************************/
-$('.numKey').click( function() {	
+$('.numKey').click( function() {
+	if ( after ) {
+		number = '';
+		stageArr = [];	
+		total = 0;	
+		check = false;
+		after = false;
+		eh = '';
+	}
 	let numVal = $(this).val();	
 	number += numVal;
 	$('#display').val(number);
@@ -61,11 +67,12 @@ $('#clearButton').click( function() {
 *************************/
 $('#addButton').on('click', addition);
 
-function addition() {
+function addition() {	
 	stageNumber();	
 	eh = '+';
 	total += Number(stageArr[0]);
 	$('#display').val(total);
+	after = false;
 }
 
 
@@ -83,6 +90,7 @@ function subtraction() {
 		total -= Number(stageArr[0]);
 		$('#display').val(total);
 	}	
+	after = false;
 }
 
 
@@ -100,6 +108,7 @@ function multiply() {
 		total *= Number(stageArr[0]);
 		$('#display').val(total);
 	}
+	after = false;
 }
 
 
@@ -117,6 +126,7 @@ function division() {
 		total /= Number(stageArr[0]);
 		$('#display').val(total);
 	}
+	after = false;
 }
 
 
@@ -125,22 +135,14 @@ function division() {
 $('#equalsButton').on('click', equation);
 
 function equation() {
-	after = true;
 	let equations = {
 		'+': addition,
 		'-': subtraction,
 		'*': multiply,
 		'/': division
 	};
-	return equations[eh]();
+	let equals = equations[eh]();
+	after = true;
+	return equals;
 }
 
-while ( after ) {
-	$('#equalsButton').on('click', silly);
-
-	function silly() {
-		console.log('you are a silly bitch!!');
-		after = false;
-	}
-
-}
