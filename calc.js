@@ -19,8 +19,9 @@ Version: 0.0.1
 let number = '';
 let total = 0;
 let stageArr = [];
+let ctrlArr = [];
 let firstNum = true;
-let after = false;
+let clrDisplay = false;
 let eh = '';
 let equationSet = false;
 
@@ -38,13 +39,13 @@ function stageNumber() {
 /* 1. Select Number
 *************************/
 $('.numKey').click( function() {
-	if ( after ) {
+	if ( clrDisplay ) {
 		number = '';
+		eh = '';
 		stageArr = [];	
 		total = 0;	
 		firstNum = true;
-		after = false;
-		eh = '';
+		clrDisplay = false;		
 	}
 	let numVal = $(this).val();	
 	number += numVal;
@@ -59,7 +60,7 @@ $('#clearButton').click( function() {
 	stageArr = [];
 	total = 0;
 	firstNum = true;
-	after = false;
+	clrDisplay = false;
 	$('#display').val('');
 });
 
@@ -72,9 +73,17 @@ function addition() {
 	stageNumber();	
 	eh = '+';
 	equationSet = true;
-	total += Number(stageArr[0]);
+	if ( firstNum ) {
+		total = Number(stageArr[0]);
+	}
+	else {
+		total += Number(stageArr[0]);
+		stageArr[0] = total;
+	}		
 	$('#display').val(total);
-	after = false;
+	ctrlArr.push(total);
+	console.log(stageArr);
+	clrDisplay = false;
 }
 
 
@@ -84,21 +93,23 @@ $('#subtractButton').on('click', subtraction);
 
 function subtraction() {	
 	if ( !equationSet ) {
-		eh = '-';
-		equationSet = true; 
+		stageNumber();
+		eh = '-';		
 		if ( firstNum ) {
 			total = Number(stageArr[0]);
 		}
 		else {
 			total -= Number(stageArr[0]);
 			$('#display').val(total);
+			equationSet = true;
 		}	
 	}
 	else {
-		equation(eh);
+		equation();
 		eh = '-';
+		equationSet = false;
 	}
-	stageNumber();
+	
 }
 
 
@@ -116,7 +127,7 @@ function multiply() {
 		total *= Number(stageArr[0]);
 		$('#display').val(total);
 	}
-	after = false;
+	clrDisplay = false;
 }
 
 
@@ -134,15 +145,15 @@ function division() {
 		total /= Number(stageArr[0]);
 		$('#display').val(total);
 	}
-	after = false;
+	clrDisplay = false;
 }
 
 
 /* 7. Equation
 *************************/
-$('#equalsButton').on('click', equation);
+$('#equalsButton').on('click', equationclrDisplay);
 
-function equation() {
+function equationclrDisplay() {
 	let equations = {
 		'+': addition,
 		'-': subtraction,
@@ -150,7 +161,18 @@ function equation() {
 		'/': division
 	};
 	let equals = equations[eh]();
-	after = true;
+	clrDisplay = true;
 	return equals;
+}
+
+function equation() {
+	console.log('clrDisplay an equation: ' + stageArr)
+	let equations = {
+		'+': addition,
+		'-': subtraction,
+		'*': multiply,
+		'/': division
+	};
+	return equations[eh]();
 }
 
