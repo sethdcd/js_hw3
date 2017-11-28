@@ -61,6 +61,7 @@ $('#clearButton').click( function() {
 	total = 0;
 	firstNum = true;
 	clrDisplay = false;
+	equationSet = false;
 	$('#display').val('');
 });
 
@@ -72,17 +73,17 @@ $('#addButton').on('click', addition);
 function addition() {	
 	stageNumber();	
 	eh = '+';
-	equationSet = true;
+	
 	if ( firstNum ) {
 		total = Number(stageArr[0]);
 	}
 	else {
 		total += Number(stageArr[0]);
 		stageArr[0] = total;
+		equationSet = true;
 	}		
 	$('#display').val(total);
 	ctrlArr.push(total);
-	console.log(stageArr);
 	clrDisplay = false;
 }
 
@@ -100,7 +101,7 @@ function subtraction() {
 		}
 		else {
 			total -= Number(stageArr[0]);
-			$('#display').val(total);
+			stageArr[0] = total;			
 			equationSet = true;
 		}	
 	}
@@ -110,6 +111,7 @@ function subtraction() {
 		equationSet = false;
 	}
 	
+	$('#display').val(total);	
 }
 
 
