@@ -1,20 +1,17 @@
-
-let clrDisplay = false;
-let stageArr = [];
-let total = 0;
-let number = '';
-let eh = '';
-let n = 0;
-let firstNum = true;
-let afterEquation = false;
-
+var lastNum = 0;
+var stageArr = [];
+var total = 0;
+var number = '';
+var equationHistory = '';
+var firstNum = true;
+var clrDisplay = false;
 
 /* 1. Select Number
 *************************/
 $('.numKey').click( function() {
 	if ( clrDisplay ) {
 		number = '';
-		eh = '';
+		equationHistory = '';
 		stageArr = [];	
 		total = 0;	
 		clrDisplay = false;		
@@ -38,12 +35,11 @@ function stageNumber() {
 *************************/
 $('#clearButton').click( function() {
 	number = '';
+	equationHistory = '';
 	stageArr = [];
-	n = 0;
 	total = 0;
 	clrDisplay = false;
 	firstNum = true;
-	afterEquation = false;
 	$('#display').val('');
 });
 
@@ -53,61 +49,140 @@ $('#clearButton').click( function() {
 $('#addButton').on('click', addition);
 
 function addition() {
-	eh = '+';
-	if ( !afterEquation ) {
-		if ( number !== '' ) {
-			stageNumber();
-		}	
-		if ( !firstNum ) {	
-			calculation();
-		}
+	clrDisplay = false;
+	if ( number !== '' ) {
+		stageNumber();
+	}	
+	if ( !firstNum ) {	
+		calculation();
 	}
-	else {
-		stageArr.push(total);
-		afterEquation = false;
-	}
+	equationHistory = '+';	
 }
 
 
-
-/* 2. Clear Button
+/* 4. Subtraction
 *************************/
+$('#subtractButton').on('click', subtraction);
+
+function subtraction() {	
+	clrDisplay = false;
+	
+	if ( number !== '' ) {
+		stageNumber();
+	}	
+	if ( !firstNum ) {	
+		calculation();
+	}
+	equationHistory = '-';
+	
+}
 
 
-/* 2. Clear Button
+/* 5. Multiplication
 *************************/
+$('#multiplyButton').on('click', multiply);
+
+function multiply() {
+	clrDisplay = false;
+	if ( number !== '' ) {
+		stageNumber();
+	}	
+	if ( !firstNum ) {	
+		calculation();
+	}
+	equationHistory = '*';
+}
 
 
-/* 2. Clear Button
+/* 6. Division
 *************************/
+$('#divideButton').on('click', division);
+
+function division() {
+	clrDisplay = false;
+	if ( number !== '' ) {
+		stageNumber();
+	}	
+	if ( !firstNum ) {	
+		calculation();
+	}
+	equationHistory = '/';
+}
 
 
 /* 7. Equals
 *************************/
-$('#equalsButton').on('click', calculation);
-
 function calculation() {
 	if ( number !== '' ) {
-		stageNumber();
+		stageNumber();		
 	}
-	let operators = {
+	var operators = {
 		'+': function() { 
 			total = stageArr[0] + stageArr[1];  
-			stageArr = [];
-			stageArr[0] = total;
 			return total;
 		},
-		'-': function() { return a - b },
-		'*': function() { return a * b },
-		'/': function() { return a / b }
+		'-': function() { 
+			total = stageArr[0] - stageArr[1];  
+			return total;
+		},
+		'*': function() { 
+			total = stageArr[0] * stageArr[1];  
+			return total;
+		},
+		'/': function() { 
+			total = stageArr[0] / stageArr[1];  
+			return total;
+		}
 	};
 
-	if ( eh !== '') {
-		console.log('before  ' + stageArr);
-		total = operators[eh]();
-		console.log('after  ' + stageArr);
-		$('#display').val(total);	
+	if ( equationHistory !== '' ) {
+		total = operators[equationHistory]();
+		lastNum = stageArr[1];
+		stageArr = [];
+		firstNum = true;
+		stageArr.push(total);
+		$('#display').val(total);
+		console.log(lastNum);
 	}
-	n++;
-	//afterEquation = true;
+}
+
+$('#equalsButton').on('click', hardCalc);
+
+function hardCalc() {
+	if ( number !== '' ) {
+		stageNumber();		
+	}	
+	if ( stageArr.length > 1 ) {
+		calculation();
+		clrDisplay = true;
+	}	
+	else {
+		var operators = {
+			'+': function() { 
+				total = stageArr[0] + lastNum;  
+				return total;
+			},
+			'-': function() { 
+				total = stageArr[0] - lastNum;  
+				return total;
+			},
+			'*': function() { 
+				total = stageArr[0] * lastNum;  
+				return total;
+			},
+			'/': function() { 
+				total = stageArr[0] / lastNum;  
+				return total;
+			}
+		};	
+
+		if ( equationHistory !== '' ) {
+			total = operators[equationHistory]();
+			stageArr = [];
+			firstNum = true;
+			stageArr.push(total);
+			$('#display').val(total);				
+		}
+	}
+
 }
